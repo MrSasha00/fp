@@ -20,8 +20,10 @@ public class TagCreatorTests : BaseTest<TagCreator>
 	public void CreateTags_ShouldReturnEmptyList_WhenNoWordsProvided()
 	{
 		var words = Enumerable.Empty<string>();
-		var tags = Sut.CreateTags(words);
-		tags.Should().BeNullOrEmpty();
+		var result = Sut.CreateTags(words);
+
+		result.Value.Should().BeNullOrEmpty();
+		result.IsSuccess.Should().BeTrue();
 	}
 
 	[Test]
@@ -29,7 +31,11 @@ public class TagCreatorTests : BaseTest<TagCreator>
 	{
 		var words = new[]
 			{ "apple", "banana", "apple", "cherry", "banana", "banana" }; // apple: 2, banana: 3, cherry: 1
-		var tags = Sut.CreateTags(words);
+		var result = Sut.CreateTags(words);
+
+		result.IsSuccess.Should().BeTrue();
+
+		var tags = result.Value;
 
 		tags.Count.Should().Be(3);
 		var appleTag = tags.Single(t => t.Word == "apple");

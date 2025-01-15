@@ -1,6 +1,8 @@
-﻿namespace TagCloud.WordCounter;
+﻿using TagCloud.Common;
+
+namespace TagCloud.WordCounter;
 
 public interface ITagCreator
 {
-	List<Tag> CreateTags(IEnumerable<string> words);
+	Result<List<Tag>> CreateTags(IEnumerable<string> words);
 }

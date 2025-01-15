@@ -1,24 +1,29 @@
-﻿using TagCloud.Settings;
+﻿using TagCloud.Common;
+using TagCloud.Common.Extensions;
+using TagCloud.Settings;
 
 namespace TagCloud.WordCounter;
 
 public class TagCreator(IImageSettingsProvider imageSettingsProvider) : ITagCreator
 {
-	public List<Tag> CreateTags(IEnumerable<string> words)
+	public Result<List<Tag>> CreateTags(IEnumerable<string> words) =>
+		words.GetCountInGroups()
+			.Select(x => new Tag(x.Item, x.Count))
+			.AsResult()
+			.Then(tags => GetWeightTags(tags, imageSettingsProvider.ImageSettings.FontSizeMin,
+				imageSettingsProvider.ImageSettings.FontSizeMax));
+
+	private static Result<List<Tag>> GetWeightTags(IEnumerable<Tag> tags, int sizeMin, int sizeMax)
 	{
-		if (!words.Any())
-			return [..Array.Empty<Tag>()];
+		if(!tags.Any())
+			return Result.Ok(new List<Tag>());
 
-		var tags = words.GetCountInGroups()
-			.Select(x =>
-				new Tag(x.Item, x.Count))
-			.ToList();
-
+		tags = tags.ToList();
 		var minCount = tags.Min(x => x.Count);
 		var maxCount = tags.Max(x => x.Count);
-		var minFontSize = imageSettingsProvider.ImageSettings.FontSizeMin;
-		var maxFontSize = imageSettingsProvider.ImageSettings.FontSizeMax;
 
-		return tags.Select(tag => tag.WithWeight((int)(minFontSize + (double)(tag.Count - minCount) / (maxCount - minCount) * (maxFontSize - minFontSize)))).ToList();
+		var result = tags.Select(tag => tag.WithWeight((int)(sizeMin + (double)(tag.Count - minCount) / (maxCount - minCount) * (sizeMax - sizeMin)))).ToList();
+
+		return Result.Ok(result);
 	}
 }

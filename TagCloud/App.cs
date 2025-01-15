@@ -24,10 +24,11 @@ internal class App(
 		var result = ValidateExtensions.ValidateSettings(settings)
 			.Then(SetSettingProviders)
 			.Then(_ => wordsReader.Read(settings.AppSettings.SourcePath))
-			.Then(wordPreprocessor.Process);
+			.Then(wordPreprocessor.Process)
+			.Then(tagCreator.CreateTags);
 
-		var tags = tagCreator.CreateTags(result.GetValueOrThrow());
-		tags = tagPositioner.Position(tags);
+
+		var tags = tagPositioner.Position(result.GetValueOrThrow());
 		cloudPainter.Paint(tags.ToArray());
 	}
 
