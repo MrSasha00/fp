@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using TagCloud.Common;
 using TagCloud.Settings;
 
 namespace TagCloud.TagPositioner.Circular;
@@ -11,7 +12,7 @@ public class CircularCloudLayouter(IImageSettingsProvider imageSettingsProvider)
 	private const double SpiralStep = 0.2;
 	private const double AngleStep = 0.01;
 
-	public Rectangle PutNextRectangle(Size rectangleSize, ICollection<Rectangle> rectangles)
+	public Result<Rectangle> PutNextRectangle(Size rectangleSize, ICollection<Rectangle> rectangles)
 	{
 		_center = new Point(imageSettingsProvider.ImageSettings.Width / 2,
 			imageSettingsProvider.ImageSettings.Height / 2);

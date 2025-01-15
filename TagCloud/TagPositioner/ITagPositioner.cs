@@ -1,8 +1,9 @@
-﻿using TagCloud.WordCounter;
+﻿using TagCloud.Common;
+using TagCloud.WordCounter;
 
 namespace TagCloud.TagPositioner;
 
 public interface ITagPositioner
 {
-	List<Tag> Position(List<Tag> tags);
+	Result<IEnumerable<Tag>> Position(List<Tag> tags);
 }

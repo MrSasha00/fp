@@ -84,4 +84,10 @@ public static class Result
 	{
 		return input.ReplaceError(err => errorMessage + ". " + err);
 	}
+
+	public static Result<IEnumerable<T>> SplitResults<T>(this IEnumerable<Result<T>> results)
+	{
+		var errors = results.Where(r => !r.IsSuccess).Select(r => r.Error).ToList();
+		return errors.Count != 0 ? Fail<IEnumerable<T>>(string.Join("; ", errors)) : Ok(results.Select(r => r.Value));
+	}
 }

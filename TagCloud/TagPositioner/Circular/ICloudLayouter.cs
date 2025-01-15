@@ -1,8 +1,9 @@
 ﻿using System.Drawing;
+using TagCloud.Common;
 
 namespace TagCloud.TagPositioner.Circular;
 
 public interface ICloudLayouter
 {
-	Rectangle PutNextRectangle(Size rectangleSize, ICollection<Rectangle> rectangles);
+	Result<Rectangle> PutNextRectangle(Size rectangleSize, ICollection<Rectangle> rectangles);
 }

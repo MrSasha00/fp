@@ -25,11 +25,11 @@ internal class App(
 			.Then(SetSettingProviders)
 			.Then(_ => wordsReader.Read(settings.AppSettings.SourcePath))
 			.Then(wordPreprocessor.Process)
-			.Then(tagCreator.CreateTags);
+			.Then(tagCreator.CreateTags)
+			.Then(tagPositioner.Position);
 
 
-		var tags = tagPositioner.Position(result.GetValueOrThrow());
-		cloudPainter.Paint(tags.ToArray());
+		cloudPainter.Paint(result.GetValueOrThrow().ToArray());
 	}
 
 	private Result<None> SetSettingProviders(Settings.Settings settings)

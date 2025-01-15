@@ -1,4 +1,6 @@
-﻿namespace TagCloud.Common.Extensions;
+﻿using TagCloud.Settings;
+
+namespace TagCloud.Common.Extensions;
 
 public static class ValidateExtensions
 {
@@ -11,5 +13,16 @@ public static class ValidateExtensions
 			return Result.Fail<Settings.Settings>("SourcePath is required");
 
 		return Result.Ok(settings);
+	}
+
+	public static Result<None> ValidateImageSettings(ImageSettings imageSettings)
+	{
+		if (imageSettings.Width <= 0 || imageSettings.Height <= 0)
+			return Result.Fail<None>("Image dimensions must be positive.");
+
+		if (string.IsNullOrEmpty(imageSettings.FontFamily))
+			return Result.Fail<None>("FontFamily is not specified.");
+
+		return Result.Ok();
 	}
 }
