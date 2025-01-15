@@ -21,15 +21,15 @@ internal class App(
 {
 	public void Run(Settings.Settings settings)
 	{
-		var result = ValidateExtensions.ValidateSettings(settings)
+		ValidateExtensions.ValidateSettings(settings)
 			.Then(SetSettingProviders)
 			.Then(_ => wordsReader.Read(settings.AppSettings.SourcePath))
 			.Then(wordPreprocessor.Process)
 			.Then(tagCreator.CreateTags)
-			.Then(tagPositioner.Position);
-
-
-		cloudPainter.Paint(result.GetValueOrThrow().ToArray());
+			.Then(tagPositioner.Position)
+			.Then(cloudPainter.Paint)
+			.RefineError("Error while generating cloud")
+			.OnFail(error => throw new ApplicationException(error));
 	}
 
 	private Result<None> SetSettingProviders(Settings.Settings settings)

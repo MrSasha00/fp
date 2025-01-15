@@ -1,8 +1,9 @@
-﻿using TagCloud.WordCounter;
+﻿using TagCloud.Common;
+using TagCloud.WordCounter;
 
 namespace TagCloud.CloudPainter;
 
 internal interface ICloudPainter
 {
-	void Paint(Tag[] tags);
+	Result<None> Paint(IEnumerable<Tag> tags);
 }
