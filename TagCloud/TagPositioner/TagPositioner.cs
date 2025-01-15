@@ -17,15 +17,11 @@ public class TagPositioner(ICloudLayouter cloudLayouter, IImageSettingsProvider 
 		var fontFamily = new FontFamily(imageSettingsProvider.ImageSettings.FontFamily ?? "Arial");
 		var rectangles = new List<Rectangle>();
 
-		foreach (var tag in tags)
-		{
-			var font = new Font(fontFamily, tag.Weight);
-
-			var textSize = graphics.MeasureString(tag.Word, font);
-			var res = cloudLayouter.PutNextRectangle(new Size((int)textSize.Width, (int)textSize.Height), rectangles);
-			tag.Location = new Point(res.X, res.Y);
-		}
-
-		return tags;
+		return (
+			from tag in tags
+			let font = new Font(fontFamily, tag.Weight)
+			let textSize = graphics.MeasureString(tag.Word, font)
+			let res = cloudLayouter.PutNextRectangle(new Size((int)textSize.Width, (int)textSize.Height), rectangles)
+			select tag.WithLocation(new Point(res.X, res.Y))).ToList();
 	}
 }

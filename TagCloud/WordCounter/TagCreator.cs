@@ -11,11 +11,7 @@ public class TagCreator(IImageSettingsProvider imageSettingsProvider) : ITagCrea
 
 		var tags = words.GetCountInGroups()
 			.Select(x =>
-				new Tag
-				{
-					Count = x.Count,
-					Word = x.Item
-				})
+				new Tag(x.Item, x.Count))
 			.ToList();
 
 		var minCount = tags.Min(x => x.Count);
@@ -23,11 +19,6 @@ public class TagCreator(IImageSettingsProvider imageSettingsProvider) : ITagCrea
 		var minFontSize = imageSettingsProvider.ImageSettings.FontSizeMin;
 		var maxFontSize = imageSettingsProvider.ImageSettings.FontSizeMax;
 
-		foreach (var tag in tags)
-		{
-			tag.Weight = (int)(minFontSize + (double)(tag.Count - minCount) / (maxCount - minCount) * (maxFontSize - minFontSize));
-		}
-
-		return tags;
+		return tags.Select(tag => tag.WithWeight((int)(minFontSize + (double)(tag.Count - minCount) / (maxCount - minCount) * (maxFontSize - minFontSize)))).ToList();
 	}
 }
