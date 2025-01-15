@@ -1,6 +1,8 @@
-﻿namespace TagCloud.WordsReader;
+﻿using TagCloud.Common;
+
+namespace TagCloud.WordsReader;
 
 public interface IWordsReader
 {
-	string[] Read(string path);
+	Result<string[]> Read(string path);
 }

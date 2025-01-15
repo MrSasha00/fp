@@ -9,5 +9,5 @@ public class FIleBoringWordsProvider(IAppSettingsProvider appSettingsProvider, I
 	public string[] GetWords() =>
 		string.IsNullOrEmpty(appSettingsProvider.AppSettings.BoringWordsPath)
 			? []
-			: wordsReader.Read(appSettingsProvider.AppSettings.BoringWordsPath);
+			: wordsReader.Read(appSettingsProvider.AppSettings.BoringWordsPath).Value;
 }

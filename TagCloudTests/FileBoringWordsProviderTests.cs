@@ -1,5 +1,7 @@
 ﻿using FluentAssertions;
 using NSubstitute;
+using TagCloud.Common;
+using TagCloud.Common.Extensions;
 using TagCloud.Settings;
 using TagCloud.WordsProcessing;
 using TagCloud.WordsReader;
@@ -16,7 +18,7 @@ public class FileBoringWordsProviderTests : BaseTest<FIleBoringWordsProvider>
 			.Returns(new AppSettings {BoringWordsPath = "SomePath"});
 		Mock<IWordsReader>()
 			.Read(Arg.Any<string>())
-			.Returns(["some", "word"]);
+			.Returns(Result.Ok<string[]>(["some", "word"]));
 
 		var strings = Sut.GetWords();
 

@@ -1,16 +1,20 @@
-﻿namespace TagCloud.WordsReader;
+﻿using TagCloud.Common;
+using TagCloud.Common.Extensions;
+
+namespace TagCloud.WordsReader;
 
 public class TxtWordsReader : IWordsReader
 {
-	public string[] Read(string path)
+	public Result<string[]> Read(string path)
 	{
 		try
 		{
-			return File.ReadLines(path).ToArray();
+			var lines = File.ReadLines(path).ToArray();
+			return lines.AsResult();
 		}
-		catch (Exception e)
+		catch (Exception)
 		{
-			throw new Exception($"Во время чтения файла {path} произошла ошибка.", e);
+			return Result.Fail<string[]>($"Во время чтения файла {path} произошла ошибка.");
 		}
 	}
 }

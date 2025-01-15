@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using NSubstitute;
+using TagCloud.Common.Extensions;
 using TagCloud.Settings;
 using TagCloud.WordsProcessing;
 using TagCloud.WordsReader;
@@ -26,7 +27,7 @@ internal class WordPreprocessorTests : BaseTest<WordPreprocessor>
 			.Returns(["в", "на"]);
 		Mock<IWordsReader>()
 			.Read(Arg.Any<string>())
-			.Returns(["в", "на", "привет"]);
+			.Returns(Result.Ok<string[]>(["в", "на", "привет"]));
 
 		var processedWords = Sut.Process();
 
@@ -40,7 +41,7 @@ internal class WordPreprocessorTests : BaseTest<WordPreprocessor>
 	{
 		Mock<IWordsReader>()
 			.Read(Arg.Any<string>())
-			.Returns(["ПРИВЕТ"]);
+			.Returns(Result.Ok<string[]>(["ПРИВЕТ"]));
 
 		var processedWords = Sut.Process();
 

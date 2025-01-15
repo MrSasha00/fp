@@ -15,7 +15,7 @@ internal class WordPreprocessor(
 			throw new ArgumentException("Source path is required");
 
 		var boringWords = boringWordsProvider.GetWords();
-		return wordsReader.Read(appSettingsProvider.AppSettings.SourcePath)
+		return wordsReader.Read(appSettingsProvider.AppSettings.SourcePath).Value
 			.Select(x => x.ToLower())
 			.Where(x => !boringWords.Contains(x))
 			.ToArray();

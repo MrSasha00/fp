@@ -15,14 +15,15 @@ public class TxtWordsReaderTests
 	[Test]
 	public void Read_ShouldNotBeNullOrEmpty()
 	{
-		var words = _txtWordsReader.Read(TestConstants.SamplesWordsTestFile);
-		words.Should().NotBeNullOrEmpty();
+		var result = _txtWordsReader.Read(TestConstants.SamplesWordsTestFile);
+		result.Value.Should().NotBeNullOrEmpty();
 	}
 
 	[Test]
 	public void Read_ShouldThrowExceptionIfFileDoesNotExist()
 	{
-		var act = () => _txtWordsReader.Read("");
-		act.Should().Throw<Exception>();
+		var result = _txtWordsReader.Read("");
+		result.Error.Should().NotBeNullOrEmpty();
+		result.IsSuccess.Should().BeFalse();
 	}
 }
