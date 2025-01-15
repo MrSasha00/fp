@@ -1,23 +1,34 @@
-﻿using TagCloud.Settings;
-using TagCloud.WordsReader;
+﻿using TagCloud.Common;
+using TagCloud.Common.Extensions;
+using TagCloud.Settings;
 
 namespace TagCloud.WordsProcessing;
 
 internal class WordPreprocessor(
 	IBoringWordsProvider boringWordsProvider,
-	IWordsReader wordsReader,
 	IAppSettingsProvider appSettingsProvider)
-	: IWordPreprocessor
+	//: IWordPreprocessor
 {
-	public string[] Process()
+	public Result<string[]> Process(string[] strings)
 	{
-		if (appSettingsProvider.AppSettings.SourcePath == null)
-			throw new ArgumentException("Source path is required");
+		try
+		{
+			if (appSettingsProvider.AppSettings.SourcePath == null)
+				return Result.Fail<string[]>("Source path is required");
 
-		var boringWords = boringWordsProvider.GetWords();
-		return wordsReader.Read(appSettingsProvider.AppSettings.SourcePath).Value
+			return boringWordsProvider.GetWords()
+				.Then(boringWords => ProcessWords(strings, boringWords));
+		}
+		catch (Exception)
+		{
+			return Result.Fail<string[]>("Failed to process words");
+		}
+	}
+
+	private static Result<string[]> ProcessWords(string[] word, string[] boringWords) =>
+		word
 			.Select(x => x.ToLower())
 			.Where(x => !boringWords.Contains(x))
-			.ToArray();
-	}
+			.ToArray()
+			.AsResult();
 }

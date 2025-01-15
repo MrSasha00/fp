@@ -5,10 +5,12 @@ using TagCloud.Settings;
 using TagCloud.TagPositioner;
 using TagCloud.WordCounter;
 using TagCloud.WordsProcessing;
+using TagCloud.WordsReader;
 
 namespace TagCloud;
 
 internal class App(
+	IWordsReader wordsReader,
 	IWordPreprocessor wordPreprocessor,
 	ITagCreator tagCreator,
 	ICloudPainter cloudPainter,
@@ -19,11 +21,12 @@ internal class App(
 {
 	public void Run(Settings.Settings settings)
 	{
-		ValidateExtensions.ValidateSettings(settings)
-			.Then(SetSettingProviders);
+		var result = ValidateExtensions.ValidateSettings(settings)
+			.Then(SetSettingProviders)
+			.Then(_ => wordsReader.Read(settings.AppSettings.SourcePath))
+			.Then(wordPreprocessor.Process);
 
-		var words = wordPreprocessor.Process().ToArray();
-		var tags = tagCreator.CreateTags(words);
+		var tags = tagCreator.CreateTags(result.GetValueOrThrow());
 		tags = tagPositioner.Position(tags);
 		cloudPainter.Paint(tags.ToArray());
 	}

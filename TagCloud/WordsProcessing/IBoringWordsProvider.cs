@@ -1,6 +1,8 @@
-﻿namespace TagCloud.WordsProcessing;
+﻿using TagCloud.Common;
+
+namespace TagCloud.WordsProcessing;
 
 public interface IBoringWordsProvider
 {
-	string[] GetWords();
+	Result<string[]> GetWords();
 }

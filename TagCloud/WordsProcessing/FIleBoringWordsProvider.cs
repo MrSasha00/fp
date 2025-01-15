@@ -1,4 +1,6 @@
-﻿using TagCloud.Settings;
+﻿using TagCloud.Common;
+using TagCloud.Common.Extensions;
+using TagCloud.Settings;
 using TagCloud.WordsReader;
 
 namespace TagCloud.WordsProcessing;
@@ -6,8 +8,10 @@ namespace TagCloud.WordsProcessing;
 public class FIleBoringWordsProvider(IAppSettingsProvider appSettingsProvider, IWordsReader wordsReader)
 	: IBoringWordsProvider
 {
-	public string[] GetWords() =>
-		string.IsNullOrEmpty(appSettingsProvider.AppSettings.BoringWordsPath)
-			? []
-			: wordsReader.Read(appSettingsProvider.AppSettings.BoringWordsPath).Value;
+	public Result<string[]> GetWords()
+	{
+		return string.IsNullOrEmpty(appSettingsProvider.AppSettings.BoringWordsPath)
+			? Result.Ok<string[]>([])
+			: wordsReader.Read(appSettingsProvider.AppSettings.BoringWordsPath);
+	}
 }
