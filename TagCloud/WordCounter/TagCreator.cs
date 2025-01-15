@@ -22,8 +22,6 @@ public class TagCreator(IImageSettingsProvider imageSettingsProvider) : ITagCrea
 		var minCount = tags.Min(x => x.Count);
 		var maxCount = tags.Max(x => x.Count);
 
-		var result = tags.Select(tag => tag.WithWeight((int)(sizeMin + (double)(tag.Count - minCount) / (maxCount - minCount) * (sizeMax - sizeMin)))).ToList();
-
-		return Result.Ok(result);
+		return tags.Select(tag => tag.WithWeight((int)(sizeMin + (double)(tag.Count - minCount) / (maxCount - minCount) * (sizeMax - sizeMin)))).ToList();
 	}
 }

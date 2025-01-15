@@ -7,7 +7,7 @@ namespace TagCloud.WordsProcessing;
 internal class WordPreprocessor(
 	IBoringWordsProvider boringWordsProvider,
 	IAppSettingsProvider appSettingsProvider)
-	//: IWordPreprocessor
+	: IWordPreprocessor
 {
 	public Result<string[]> Process(string[] strings)
 	{

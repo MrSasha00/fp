@@ -19,7 +19,7 @@ public class TagPositioner(ICloudLayouter cloudLayouter, IImageSettingsProvider 
 	{
 		var rectangles = new List<Rectangle>();
 
-		return tags.Select(tag => ProcessTag(tag, paint, rectangles))
+		 return tags.Select(tag => ProcessTag(tag, paint, rectangles)).ToList()
 			.SplitResults();
 	}
 
