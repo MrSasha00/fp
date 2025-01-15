@@ -34,7 +34,7 @@ public class ResultForm : Form
 
 	private void ShowCloudImage(AppSettings appSettings, ImageSettings imageSettings)
 	{
-		_lifetimeScope.Resolve<IApp>().Run(appSettings, imageSettings);
+		_lifetimeScope.Resolve<IApp>().Run(new Settings { AppSettings = appSettings, ImageSettings = imageSettings });
 		var picture = new PictureBox
 		{
 			SizeMode = PictureBoxSizeMode.AutoSize,

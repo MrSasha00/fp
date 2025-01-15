@@ -41,6 +41,6 @@ public class TagCloudTest
 		};
 
 		var app = _container.Resolve<IApp>();
-		app.Run(appSettings, imageSettings);
+		app.Run(new Settings { ImageSettings = imageSettings, AppSettings = appSettings });
 	}
 }

@@ -1,8 +1,6 @@
-﻿using TagCloud.Settings;
-
-namespace TagCloud;
+﻿namespace TagCloud;
 
 public interface IApp
 {
-	void Run(AppSettings appSettings, ImageSettings imageSettings);
+	void Run(Settings.Settings settings);
 }

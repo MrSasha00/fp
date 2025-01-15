@@ -1,4 +1,6 @@
 ﻿using TagCloud.CloudPainter;
+using TagCloud.Common;
+using TagCloud.Common.Extensions;
 using TagCloud.Settings;
 using TagCloud.TagPositioner;
 using TagCloud.WordCounter;
@@ -15,11 +17,10 @@ internal class App(
 	IAppSettingsProvider appSettingsProvider)
 : IApp
 {
-	public void Run(AppSettings appSettings, ImageSettings imageSettings)
+	public void Run(Settings.Settings settings)
 	{
-		ValidateAppSettings(appSettings);
-		imageSettingsProvider.ImageSettings = imageSettings;
-		appSettingsProvider.AppSettings = appSettings;
+		ValidateExtensions.ValidateSettings(settings)
+			.Then(SetSettingProviders);
 
 		var words = wordPreprocessor.Process().ToArray();
 		var tags = tagCreator.CreateTags(words);
@@ -27,12 +28,17 @@ internal class App(
 		cloudPainter.Paint(tags.ToArray());
 	}
 
-	private void ValidateAppSettings(AppSettings appSettings)
+	private Result<None> SetSettingProviders(Settings.Settings settings)
 	{
-		if(string.IsNullOrEmpty(appSettings.SavePath))
-			throw new ArgumentException("SavePath is required");
-
-		if(string.IsNullOrEmpty(appSettings.SourcePath))
-			throw new ArgumentException("SourcePath is required");
+		try
+		{
+			appSettingsProvider.AppSettings = settings.AppSettings;
+			imageSettingsProvider.ImageSettings = settings.ImageSettings;
+			return Result.Ok(new None());
+		}
+		catch (Exception)
+		{
+			return Result.Fail<None>("Failed to set settings");
+		}
 	}
 }
