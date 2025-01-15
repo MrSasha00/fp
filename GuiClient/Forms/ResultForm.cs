@@ -34,14 +34,28 @@ public class ResultForm : Form
 
 	private void ShowCloudImage(AppSettings appSettings, ImageSettings imageSettings)
 	{
-		_lifetimeScope.Resolve<IApp>().Run(new Settings { AppSettings = appSettings, ImageSettings = imageSettings });
-		var picture = new PictureBox
+		try
 		{
-			SizeMode = PictureBoxSizeMode.AutoSize,
-			ImageLocation = appSettings.SavePath,
-			Dock = DockStyle.Top,
-		};
-		picture.Load();
-		Controls.Add(picture);
+			_lifetimeScope.Resolve<IApp>().Run(new Settings
+			{
+				AppSettings = appSettings,
+				ImageSettings = imageSettings
+			});
+			var picture = new PictureBox
+			{
+				SizeMode = PictureBoxSizeMode.AutoSize,
+				ImageLocation = appSettings.SavePath,
+				Dock = DockStyle.Top,
+			};
+			picture.Load();
+			Controls.Add(picture);
+		}
+		catch (Exception e)
+		{
+			MessageBox.Show($"В приложении произошла ошибка: {e.Message}",
+				"Ошибка",
+				MessageBoxButtons.OK,
+				MessageBoxIcon.Error);
+		}
 	}
 }
