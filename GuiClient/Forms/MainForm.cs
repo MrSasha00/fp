@@ -1,4 +1,6 @@
 using Autofac;
+using TagCloud.Common;
+using TagCloud.Common.Extensions;
 using TagCloud.Settings;
 
 namespace GuiClient.Forms;
@@ -29,14 +31,28 @@ public class MainForm : Form
 	public MainForm(ILifetimeScope lifetimeScope)
 	{
 		_lifetimeScope = lifetimeScope;
-		InitForm();
-		AddWidthHeightControl();
-		AddColorControl();
-		AddSourceFilePathSelector();
-		AddBoringWordsFilePathSelector();
-		AddFontSelector();
-		AddMinMaxFontSizeControls();
-		AddGenerateButton();
+
+		Init().OnFail(ErrorExtensions.ShowError);
+	}
+
+	private Result<None> Init()
+	{
+		try
+		{
+			InitForm();
+			AddWidthHeightControl();
+			AddColorControl();
+			AddSourceFilePathSelector();
+			AddBoringWordsFilePathSelector();
+			AddFontSelector();
+			AddMinMaxFontSizeControls();
+			AddGenerateButton();
+			return Result.Ok();
+		}
+		catch (Exception e)
+		{
+			return Result.Fail<None>($"Во время инициализации формы возникли ошибки: {e.Message} ");
+		}
 	}
 
 	private void InitForm()
@@ -177,25 +193,38 @@ public class MainForm : Form
 
 	private void GenerateButton_Click(object sender, EventArgs e)
 	{
-		var imageSettings = new ImageSettings
-		{
-			Width = (int)_widthInput!.Value,
-			Height = (int)_heightInput!.Value,
-			BackgroundColor = _selectedColor.Name,
-			FontFamily = _selectedFont.FontFamily.Name,
-			FontSizeMax = (int)_minFontSizeInput!.Value,
-			FontSizeMin = (int)_maxFontSizeInput!.Value
-		};
+		CreateAppSettings()
+			.Then(settings => new ResultForm(this, _lifetimeScope, settings).Show())
+			.Then(_ => Hide())
+			.OnFail(ErrorExtensions.ShowError);
+	}
 
-		var appSettings = new AppSettings
+	private Result<Settings> CreateAppSettings()
+	{
+		try
 		{
-			SourcePath = _sourceFilePath,
-			BoringWordsPath = _boringWordsFilePath,
-			SavePath = "output.png"
-		};
-
-		var resultForm = new ResultForm(this, _lifetimeScope, appSettings, imageSettings);
-		resultForm.Show();
-		Hide();
+			return new Settings
+			{
+				AppSettings = new AppSettings
+				{
+					SourcePath = _sourceFilePath,
+					BoringWordsPath = _boringWordsFilePath,
+					SavePath = "output.png"
+				},
+				ImageSettings = new ImageSettings
+				{
+					Width = (int)_widthInput!.Value,
+					Height = (int)_heightInput!.Value,
+					BackgroundColor = _selectedColor.Name,
+					FontFamily = _selectedFont.FontFamily.Name,
+					FontSizeMax = (int)_minFontSizeInput!.Value,
+					FontSizeMin = (int)_maxFontSizeInput!.Value
+				}
+			};
+		}
+		catch (Exception e)
+		{
+			return Result.Fail<Settings>($"Некорректная установка настроек: {e.Message}");
+		}
 	}
 }

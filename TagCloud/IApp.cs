@@ -1,6 +1,8 @@
-﻿namespace TagCloud;
+﻿using TagCloud.Common;
+
+namespace TagCloud;
 
 public interface IApp
 {
-	void Run(Settings.Settings settings);
+	Result<None> Run(Settings.Settings settings);
 }

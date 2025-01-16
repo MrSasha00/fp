@@ -19,8 +19,7 @@ internal class App(
 	IAppSettingsProvider appSettingsProvider)
 : IApp
 {
-	public void Run(Settings.Settings settings)
-	{
+	public Result<None> Run(Settings.Settings settings) =>
 		ValidateExtensions.ValidateSettings(settings)
 			.Then(SetSettingProviders)
 			.Then(_ => wordsReader.Read(settings.AppSettings.SourcePath))
@@ -28,9 +27,7 @@ internal class App(
 			.Then(tagCreator.CreateTags)
 			.Then(tagPositioner.Position)
 			.Then(cloudPainter.Paint)
-			.RefineError("Error while generating cloud")
-			.OnFail(error => throw new ApplicationException(error));
-	}
+			.RefineError("Error while generating cloud");
 
 	private Result<None> SetSettingProviders(Settings.Settings settings)
 	{
