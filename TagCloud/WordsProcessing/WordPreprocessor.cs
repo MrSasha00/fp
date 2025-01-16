@@ -11,18 +11,12 @@ internal class WordPreprocessor(
 {
 	public Result<string[]> Process(string[] strings)
 	{
-		try
-		{
-			if (appSettingsProvider.AppSettings.SourcePath == null)
-				return Result.Fail<string[]>("Source path is required");
+		if (appSettingsProvider.AppSettings.SourcePath == null)
+			return Result.Fail<string[]>("Source path is required");
 
-			return boringWordsProvider.GetWords()
-				.Then(boringWords => ProcessWords(strings, boringWords));
-		}
-		catch (Exception)
-		{
-			return Result.Fail<string[]>("Failed to process words");
-		}
+		return boringWordsProvider
+			.GetWords()
+			.Then(boringWords => ProcessWords(strings, boringWords));
 	}
 
 	private static Result<string[]> ProcessWords(string[] word, string[] boringWords) =>
